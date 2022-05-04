@@ -31,7 +31,7 @@ spring:
 
   # https://docs.spring.io/spring-boot/docs/current/reference/html/appendix-application-properties.html#common-application-properties-cache
   cache:
-    cache-names: users
+    cache-names: users, dish, menu, restaurants
     caffeine.spec: maximumSize=1,expireAfterAccess=60s
 
 logging:
@@ -45,3 +45,6 @@ server.servlet:
     charset: UTF-8 # Charset of HTTP requests and responses. Added to the "Content-Type" header if not set explicitly
     enabled: true # Enable http encoding support
     force: true
+
+time-limit:
+  voice: '11:00'
