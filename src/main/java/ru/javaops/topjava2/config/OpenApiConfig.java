@@ -22,7 +22,7 @@ import org.springframework.context.annotation.Configuration;
                 title = "REST API documentation",
                 version = "1.0",
                 description = "Приложение по <a href='https://javaops.ru/view/topjava2'>курсу TopJava-2</a> (решение выпускного проекта)",
-                contact = @Contact(url = "https://javaops.ru/#contacts", name = "Grigory Kislin", email = "admin@javaops.ru")
+                contact = @Contact(name = "Anton Volchek", email = "aavolchekk@gmail.com")
         ),
         security = @SecurityRequirement(name = "basicAuth")
 )
