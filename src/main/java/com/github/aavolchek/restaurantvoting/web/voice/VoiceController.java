@@ -53,8 +53,7 @@ public class VoiceController {
         return menuRepository.findAllByDateWithRestaurantAndDishList(date);
     }
 
-    @PostMapping
-    @RequestMapping(value = "{restaurantId}")
+    @PostMapping(value = "{restaurantId}")
     @ResponseBody
     @Transactional
     public Voice createWithLocation(@PathVariable("restaurantId") int restaurantId, @ApiIgnore @AuthenticationPrincipal AuthUser user) {
