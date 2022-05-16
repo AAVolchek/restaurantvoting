@@ -1,7 +1,11 @@
 package com.github.aavolchek.restaurantvoting.web.voice;
 
+import com.github.aavolchek.restaurantvoting.model.Restaurant;
 import com.github.aavolchek.restaurantvoting.model.Voice;
+import com.github.aavolchek.restaurantvoting.repository.MenuRepository;
+import com.github.aavolchek.restaurantvoting.repository.RestaurantRepository;
 import com.github.aavolchek.restaurantvoting.repository.VoiceRepository;
+import com.github.aavolchek.restaurantvoting.web.AuthUser;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,19 +15,13 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-import com.github.aavolchek.restaurantvoting.model.Menu;
-import com.github.aavolchek.restaurantvoting.model.Restaurant;
-import com.github.aavolchek.restaurantvoting.repository.MenuRepository;
-import com.github.aavolchek.restaurantvoting.repository.RestaurantRepository;
-import com.github.aavolchek.restaurantvoting.web.AuthUser;
 import springfox.documentation.annotations.ApiIgnore;
 
-import javax.validation.Valid;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.List;
 
-import static com.github.aavolchek.restaurantvoting.util.validation.ValidationUtil.*;
+import static com.github.aavolchek.restaurantvoting.util.validation.ValidationUtil.checkNew;
+import static com.github.aavolchek.restaurantvoting.util.validation.ValidationUtil.checkTimeLimit;
 
 @RestController
 @RequestMapping(value = VoiceController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -46,13 +44,6 @@ public class VoiceController {
         this.restaurantRepository = restaurantRepository;
     }
 
-    @GetMapping("/menus-today's")
-    public List<Menu> getAllMenu() {
-        log.info("getAll menus");
-        LocalDate date = LocalDate.now();
-        return menuRepository.findAllByDateWithRestaurantAndDishList(date);
-    }
-
     @PostMapping(value = "{restaurantId}")
     @ResponseBody
     @Transactional
@@ -64,15 +55,18 @@ public class VoiceController {
         return voiceRepository.save(voice);
     }
 
-    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping("/{restaurantId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseBody
     @Transactional
-    public void update(@Valid @RequestBody Voice voice, @PathVariable int id, @ApiIgnore @AuthenticationPrincipal AuthUser user) {
-        log.info("update {} with id={}", voice, id);
+    public void update(@PathVariable("restaurantId") int restaurantId, @ApiIgnore @AuthenticationPrincipal AuthUser user){
+        log.info("update voice - restaurant {}", restaurantId);
         checkTimeLimit(timeLimitForVoting);
-        assureIdConsistent(voice, id);
-        assureIdConsistent(voice.getUser(), user.id());
-        voiceRepository.save(voice);
+        Voice voice = voiceRepository.get(LocalDate.now(), user.id()).orElse(null);
+        if (voice != null) {
+            voice.setRestaurant(getRestaurantById(restaurantId));
+            voiceRepository.save(voice);
+        }
     }
 
     @GetMapping("/voice-of-user-for-today")
