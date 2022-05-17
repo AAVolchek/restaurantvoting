@@ -1,5 +1,6 @@
 package com.github.aavolchek.restaurantvoting.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -16,13 +17,14 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString(callSuper = true)
+@ToString(callSuper = true, exclude = {"restaurant, dishList"})
 public class Menu extends NamedEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "restaurant_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @NotNull
+    @JsonBackReference
     private Restaurant restaurant;
 
     @Column(name = "registered_data", nullable = false, columnDefinition = "date default now()")
@@ -30,10 +32,11 @@ public class Menu extends NamedEntity {
     @NotNull
     private LocalDate registeredDate;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "menu_dishes",
             joinColumns = {@JoinColumn(name = "menu_id")},
             inverseJoinColumns = @JoinColumn(name = "dish_id"))
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<Dish> dishList;
 
     public Menu(Restaurant restaurant, LocalDate registeredDate, List<Dish> dishList) {

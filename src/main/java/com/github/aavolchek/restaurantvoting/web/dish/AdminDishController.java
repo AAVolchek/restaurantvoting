@@ -1,12 +1,12 @@
 package com.github.aavolchek.restaurantvoting.web.dish;
 
+import com.github.aavolchek.restaurantvoting.model.Dish;
 import com.github.aavolchek.restaurantvoting.repository.DishRepository;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import com.github.aavolchek.restaurantvoting.model.Dish;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -43,7 +43,7 @@ public class AdminDishController {
         }
     }
 
-    @GetMapping("/dishes")
+    @GetMapping
     public List<Dish> getAll(@PathVariable int restaurantId) {
         log.info("getAll for restaurant {}", restaurantId);
         return dishRepository.getAll(restaurantId);
@@ -68,7 +68,7 @@ public class AdminDishController {
         }
     }
 
-    @GetMapping("/with-restaurant/{id}")
+    @GetMapping("/{id}/with-restaurant/")
     public Dish getWithRestaurant(@PathVariable int id, @PathVariable int restaurantId) {
         log.info("get dish {} for restaurant {}", id, restaurantId);
         return dishRepository.getWithRestaurant(id, restaurantId).orElse(null);
