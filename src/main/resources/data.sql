@@ -7,12 +7,12 @@ VALUES ('USER', 1),
        ('ADMIN', 2),
        ('USER', 2);
 
-INSERT INTO restaurant (name)
-VALUES ('Coqfighter Finsbury Park'),
-       ('Piazza Italiana'),
-       ('ZIMA Russian Restaurant');
+INSERT INTO restaurant (name, location)
+VALUES ('Coqfighter Finsbury Park', '75 Beak Str.' ),
+       ('Piazza Italiana', 'str. Mozart 89'),
+       ('ZIMA Russian Restaurant', 'str. Georgy 1a');
 
-INSERT INTO menu (name,  restaurant_id, registered_data)
+INSERT INTO menu (name,  restaurant_id, registered_date)
 VALUES ('Menu Coqfighter Finsbury Park', 1, now()),
        ('LUNCH SET MENU', 2, now() - interval 1 DAY);
 

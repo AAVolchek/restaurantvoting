@@ -12,7 +12,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Entity
-@Table(name = "menu", uniqueConstraints = {@UniqueConstraint(columnNames = {"restaurant_id", "registered_data"},
+@Table(name = "menu", uniqueConstraints = {@UniqueConstraint(columnNames = {"restaurant_id", "registered_date"},
         name = "menus_unique_restaurant_date_idx")})
 @Getter
 @Setter
@@ -27,7 +27,7 @@ public class Menu extends NamedEntity {
     @JsonBackReference
     private Restaurant restaurant;
 
-    @Column(name = "registered_data", nullable = false, columnDefinition = "date default now()")
+    @Column(name = "registered_date", nullable = false, columnDefinition = "date default now()")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     @NotNull
     private LocalDate registeredDate;

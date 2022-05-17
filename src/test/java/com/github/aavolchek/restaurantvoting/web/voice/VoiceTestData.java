@@ -13,8 +13,9 @@ public class VoiceTestData {
 
     public static final MatcherFactory.Matcher<Voice> VOICE_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(Voice.class, "restaurant", "user");
 
-    public static Restaurant restaurant1 = new Restaurant(1,"Coqfighter Finsbury Park");
-    public static Restaurant restaurant2 = new Restaurant(2,"Piazza Italiana");
+    public static Restaurant restaurant1 = new Restaurant(1,"Coqfighter Finsbury Park", "75 Beak Str." +
+            "W1F 9SS");
+    public static Restaurant restaurant2 = new Restaurant(2,"Piazza Italiana","str. Mozart 89");
 
     public static Voice getNew() {
         return new Voice(null, null, LocalDate.now(), null);
