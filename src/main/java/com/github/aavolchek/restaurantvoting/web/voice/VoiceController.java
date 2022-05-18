@@ -1,8 +1,6 @@
 package com.github.aavolchek.restaurantvoting.web.voice;
 
-import com.github.aavolchek.restaurantvoting.model.Restaurant;
 import com.github.aavolchek.restaurantvoting.model.Voice;
-import com.github.aavolchek.restaurantvoting.repository.MenuRepository;
 import com.github.aavolchek.restaurantvoting.repository.RestaurantRepository;
 import com.github.aavolchek.restaurantvoting.repository.VoiceRepository;
 import com.github.aavolchek.restaurantvoting.web.AuthUser;
@@ -23,7 +21,6 @@ import java.net.URI;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-import static com.github.aavolchek.restaurantvoting.util.validation.ValidationUtil.checkNew;
 import static com.github.aavolchek.restaurantvoting.util.validation.ValidationUtil.checkTimeLimit;
 
 @RestController
@@ -38,12 +35,10 @@ public class VoiceController {
     public LocalTime timeLimitForVoting;
 
     private final VoiceRepository voiceRepository;
-    private final MenuRepository menuRepository;
     private final RestaurantRepository restaurantRepository;
 
-    public VoiceController(VoiceRepository voiceRepository, MenuRepository menuRepository, RestaurantRepository restaurantRepository) {
+    public VoiceController(VoiceRepository voiceRepository, RestaurantRepository restaurantRepository) {
         this.voiceRepository = voiceRepository;
-        this.menuRepository = menuRepository;
         this.restaurantRepository = restaurantRepository;
     }
 
@@ -52,9 +47,10 @@ public class VoiceController {
     @Transactional
     public ResponseEntity<Voice> createWithLocation(@PathVariable("restaurantId") int restaurantId, @ApiIgnore @AuthenticationPrincipal AuthUser user) {
         log.info("create voice for restaurant {}", restaurantId);
-        checkTimeLimit(timeLimitForVoting);
-        Voice voice = new Voice(user.getUser(), LocalDate.now(), getRestaurantById(restaurantId));
-        checkNew(voice);
+        if(voiceRepository.get(LocalDate.now(), user.id()).orElse(null) != null) {
+            checkTimeLimit(timeLimitForVoting);
+        }
+        Voice voice = new Voice(user.getUser(), LocalDate.now(), restaurantRepository.getById(restaurantId));
         Voice created = voiceRepository.save(voice);
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL + "/{id}")
@@ -71,18 +67,13 @@ public class VoiceController {
         checkTimeLimit(timeLimitForVoting);
         Voice voice = voiceRepository.get(LocalDate.now(), user.id()).orElse(null);
         if (voice != null) {
-            voice.setRestaurant(getRestaurantById(restaurantId));
+            voice.setRestaurant(restaurantRepository.getById(restaurantId));
             voiceRepository.save(voice);
         }
     }
 
     @GetMapping("/voice-of-user-for-today")
-    public Voice getVoiceOfUserForToday(@AuthenticationPrincipal AuthUser user){
-        return voiceRepository.getWithRestaurant(LocalDate.now(), user.id()).orElse(null);
+    public ResponseEntity<Voice> getVoiceOfUserForToday(@ApiIgnore @AuthenticationPrincipal AuthUser user){
+        return ResponseEntity.of(voiceRepository.getWithRestaurant(LocalDate.now(), user.id()));
     }
-
-    private Restaurant getRestaurantById(int id){
-        return restaurantRepository.findById(id).orElse(null);
-    }
-
 }
