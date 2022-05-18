@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Transactional(readOnly = true)
-// TODO: cache only most requested data!
 @CacheConfig(cacheNames = "dish")
 public interface DishRepository extends BaseRepository<Dish> {
     @Query("SELECT d From Dish d JOIN FETCH d.restaurant WHERE d.id = ?1 AND d.restaurant.id = ?2")

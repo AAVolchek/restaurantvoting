@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Transactional(readOnly = true)
-// TODO: cache only most requested data!
 @CacheConfig(cacheNames = "menu")
 public interface MenuRepository extends BaseRepository<Menu>{
     @EntityGraph(attributePaths = {"restaurant"}, type = EntityGraph.EntityGraphType.FETCH)
