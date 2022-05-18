@@ -24,10 +24,10 @@ import java.time.LocalTime;
 import static com.github.aavolchek.restaurantvoting.util.validation.ValidationUtil.checkTimeLimit;
 
 @RestController
-@RequestMapping(value = VoiceController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = UserVoiceController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
-@Tag(name = "VoiceController")
-public class VoiceController {
+@Tag(name = "UserVoiceController")
+public class UserVoiceController {
     public static final String REST_URL ="/api/user/voice";
 
     @Value("${time-limit.voice}")
@@ -37,7 +37,7 @@ public class VoiceController {
     private final VoiceRepository voiceRepository;
     private final RestaurantRepository restaurantRepository;
 
-    public VoiceController(VoiceRepository voiceRepository, RestaurantRepository restaurantRepository) {
+    public UserVoiceController(VoiceRepository voiceRepository, RestaurantRepository restaurantRepository) {
         this.voiceRepository = voiceRepository;
         this.restaurantRepository = restaurantRepository;
     }

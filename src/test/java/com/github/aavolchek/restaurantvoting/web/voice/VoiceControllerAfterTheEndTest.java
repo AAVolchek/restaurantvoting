@@ -17,17 +17,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class VoiceControllerAfterTheEndTest extends AbstractVoiceControllerTest{
 
     @Test
-    @WithUserDetails(value = UserTestData.USER_MAIL)
-    void createWithLocation() throws Exception{
-        perform(MockMvcRequestBuilders
-                .post(REST_URL + VoiceTestData.REST1_ID)
-                .param("restaurantId", Integer.toString(VoiceTestData.REST1_ID)))
-                .andDo(print())
-                .andExpect(content().string(
-                        containsString("It is impossible to vote for the restaurant. The voting ended at")));
-    }
-
-    @Test
     @WithUserDetails(value = UserTestData.ADMIN_MAIL)
     void update() throws Exception {
         Voice updated = VoiceTestData.getUpdated();

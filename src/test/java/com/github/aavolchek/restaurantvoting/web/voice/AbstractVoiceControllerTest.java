@@ -15,7 +15,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public abstract class AbstractVoiceControllerTest extends AbstractControllerTest {
 
-    protected static final String REST_URL = VoiceController.REST_URL + '/';
+    protected static final String REST_URL = UserVoiceController.REST_URL + '/';
 
     @Autowired
     protected VoiceRepository voiceRepository;
