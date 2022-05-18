@@ -1,12 +1,12 @@
 package com.github.aavolchek.restaurantvoting.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.github.aavolchek.restaurantvoting.HasIdAndEmail;
+import com.github.aavolchek.restaurantvoting.util.validation.NoHtml;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.util.CollectionUtils;
-import com.github.aavolchek.restaurantvoting.HasIdAndEmail;
-import com.github.aavolchek.restaurantvoting.util.validation.NoHtml;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -14,7 +14,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serial;
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 import java.util.EnumSet;
@@ -26,7 +25,7 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString(callSuper = true, exclude = {"password"})
-public class User extends NamedEntity implements HasIdAndEmail, Serializable {
+public class User extends NamedEntity implements HasIdAndEmail {
     @Serial
     private static final long serialVersionUID = 1L;
 

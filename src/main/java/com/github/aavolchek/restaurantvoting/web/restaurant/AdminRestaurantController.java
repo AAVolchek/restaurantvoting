@@ -1,18 +1,15 @@
 package com.github.aavolchek.restaurantvoting.web.restaurant;
 
+import com.github.aavolchek.restaurantvoting.model.Restaurant;
 import com.github.aavolchek.restaurantvoting.model.Voice;
+import com.github.aavolchek.restaurantvoting.repository.RestaurantRepository;
 import com.github.aavolchek.restaurantvoting.repository.VoiceRepository;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.github.aavolchek.restaurantvoting.model.Restaurant;
-import com.github.aavolchek.restaurantvoting.repository.RestaurantRepository;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
@@ -25,8 +22,6 @@ import static com.github.aavolchek.restaurantvoting.util.validation.ValidationUt
 @RequestMapping(value = AdminRestaurantController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
 @Tag(name = "AdminRestaurantController")
-// TODO: cache only most requested data!
-@CacheConfig(cacheNames = "restaurants")
 public class AdminRestaurantController {
     private final RestaurantRepository repository;
     private final VoiceRepository voiceRepository;
@@ -52,14 +47,12 @@ public class AdminRestaurantController {
     }
 
     @GetMapping
-    @Cacheable
     public List<Restaurant> getAll() {
         log.info("getAll");
         return repository.findAll();
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    @CacheEvict(allEntries = true)
     public Restaurant createWithLocation(@Valid @RequestBody Restaurant restaurant) {
         log.info("create {}", restaurant);
         checkNew(restaurant);
@@ -68,7 +61,6 @@ public class AdminRestaurantController {
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @CacheEvict(allEntries = true)
     public void update(@Valid @RequestBody Restaurant restaurant, @PathVariable int id) {
         log.info("update {}", id);
         assureIdConsistent(restaurant, id);
