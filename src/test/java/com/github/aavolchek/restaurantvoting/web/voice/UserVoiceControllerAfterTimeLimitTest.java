@@ -12,9 +12,21 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import static org.hamcrest.Matchers.containsString;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @TestPropertySource(properties = {"time-limit.voice=00:00:00"})
-class VoiceControllerAfterTheEndTest extends AbstractVoiceControllerTest{
+class UserVoiceControllerAfterTimeLimitTest extends UserVoiceControllerTest {
+    @Test
+    @WithUserDetails(value = UserTestData.ADMIN_MAIL)
+    void createWithLocation() throws Exception{
+        perform(MockMvcRequestBuilders
+                .post(REST_URL + VoiceTestData.REST1_ID)
+                .param("restaurantId", Integer.toString(VoiceTestData.REST1_ID)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(content().string(
+                        containsString("It is impossible to vote for the restaurant. The voting ended at")));
+    }
 
     @Test
     @WithUserDetails(value = UserTestData.ADMIN_MAIL)
@@ -25,6 +37,7 @@ class VoiceControllerAfterTheEndTest extends AbstractVoiceControllerTest{
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(updated)))
                 .andDo(print())
+                .andExpect(status().isUnprocessableEntity())
                 .andExpect(content().string(
                         containsString("It is impossible to vote for the restaurant. The voting ended at")));
     }

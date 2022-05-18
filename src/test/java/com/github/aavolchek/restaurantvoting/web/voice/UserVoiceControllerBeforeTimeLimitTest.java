@@ -13,7 +13,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @TestPropertySource(properties = {"time-limit.voice=23:59:59"})
-class VoiceControllerBeforeTheEndTest extends AbstractVoiceControllerTest {
+class UserVoiceControllerBeforeTimeLimitTest extends UserVoiceControllerTest {
 
     @Test
     @WithUserDetails(value = UserTestData.USER_MAIL)
@@ -22,7 +22,8 @@ class VoiceControllerBeforeTheEndTest extends AbstractVoiceControllerTest {
         ResultActions action = perform(MockMvcRequestBuilders
                 .post(REST_URL + REST1_ID)
                 .param("restaurantId", Integer.toString(REST1_ID)))
-                .andDo(print());
+                .andDo(print())
+                .andExpect(status().isCreated());
 
         Voice created = VoiceTestData.VOICE_MATCHER.readFromJson(action);
         int newId = created.getId();

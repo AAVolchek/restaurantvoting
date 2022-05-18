@@ -13,8 +13,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public abstract class AbstractVoiceControllerTest extends AbstractControllerTest {
-
+class UserVoiceControllerTest extends AbstractControllerTest {
     protected static final String REST_URL = UserVoiceController.REST_URL + '/';
 
     @Autowired

@@ -1,9 +1,9 @@
 package com.github.aavolchek.restaurantvoting.web.voice;
 
+import com.github.aavolchek.restaurantvoting.model.Restaurant;
 import com.github.aavolchek.restaurantvoting.model.Voice;
 import com.github.aavolchek.restaurantvoting.web.MatcherFactory;
 import com.github.aavolchek.restaurantvoting.web.user.UserTestData;
-import com.github.aavolchek.restaurantvoting.model.Restaurant;
 
 import java.time.LocalDate;
 
@@ -11,7 +11,7 @@ public class VoiceTestData {
     public static final int VOICE_ADMIN_ID = 1;
     public static final int REST1_ID = 1;
 
-    public static final MatcherFactory.Matcher<Voice> VOICE_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(Voice.class, "restaurant", "user");
+    public static final MatcherFactory.Matcher<Voice> VOICE_MATCHER = MatcherFactory.usingEqualsComparator(Voice.class);
 
     public static Restaurant restaurant1 = new Restaurant(1,"Coqfighter Finsbury Park", "75 Beak Str." +
             "W1F 9SS");
