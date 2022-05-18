@@ -10,8 +10,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
+import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -47,16 +49,21 @@ public class AdminRestaurantController {
     }
 
     @GetMapping
+    @ResponseStatus(HttpStatus.OK)
     public List<Restaurant> getAll() {
         log.info("getAll");
         return repository.findAll();
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public Restaurant createWithLocation(@Valid @RequestBody Restaurant restaurant) {
+    public ResponseEntity<Restaurant> createWithLocation(@Valid @RequestBody Restaurant restaurant) {
         log.info("create {}", restaurant);
         checkNew(restaurant);
-        return repository.save(restaurant);
+        Restaurant created = repository.save(restaurant);
+        URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path(REST_URL + "/{id}")
+                .buildAndExpand(created.getId()).toUri();
+        return ResponseEntity.created(uriOfNewResource).body(created);
     }
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)

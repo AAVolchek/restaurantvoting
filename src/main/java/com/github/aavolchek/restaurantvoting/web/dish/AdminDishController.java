@@ -6,9 +6,12 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
+import java.net.URI;
 import java.util.List;
 
 import static com.github.aavolchek.restaurantvoting.util.validation.ValidationUtil.assureIdConsistent;
@@ -28,33 +31,37 @@ public class AdminDishController {
     }
 
     @GetMapping("/{id}")
-    public Dish get(@PathVariable int id, @PathVariable int restaurantId) {
+    public ResponseEntity<Dish> get(@PathVariable int id, @PathVariable int restaurantId) {
         log.info("get dish {} for restaurant {}", id, restaurantId);
-        return dishRepository.findById(id).filter(dish -> dish.getRestaurant().getId() == restaurantId)
-                .orElse(null);
+        return ResponseEntity.of(dishRepository.findById(id).filter(dish -> dish.getRestaurant().getId() == restaurantId));
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable int id, @PathVariable int restaurantId) {
         log.info("delete dish {} for restaurant {}", id, restaurantId);
-        if(get(id, restaurantId) != null) {
+        if(get(id, restaurantId).getBody() != null) {
             dishRepository.deleteExisted(id);
         }
     }
 
     @GetMapping
+    @ResponseStatus(HttpStatus.OK)
     public List<Dish> getAll(@PathVariable int restaurantId) {
         log.info("getAll for restaurant {}", restaurantId);
         return dishRepository.getAll(restaurantId);
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public Dish createWithLocation(@Valid @RequestBody Dish dish, @PathVariable int restaurantId) {
+    public ResponseEntity<Dish> createWithLocation(@Valid @RequestBody Dish dish, @PathVariable int restaurantId) {
         log.info("create {} for restaurant {}", dish, restaurantId);
         checkNew(dish);
         assureIdConsistent(dish.getRestaurant(), restaurantId);
-        return dishRepository.save(dish);
+        Dish created = dishRepository.save(dish);
+        URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path(REST_URL + "/{id}")
+                .buildAndExpand(restaurantId, created.getId()).toUri();
+        return ResponseEntity.created(uriOfNewResource).body(created);
     }
 
     @PutMapping(value = "{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -63,9 +70,7 @@ public class AdminDishController {
         log.info("update {} dish for restaurant {}", dish, restaurantId);
         assureIdConsistent(dish, id);
         assureIdConsistent(dish.getRestaurant(), restaurantId);
-        if (!dish.isNew() && get(id, restaurantId) != null) {
-            dishRepository.save(dish);
-        }
+        dishRepository.save(dish);
     }
 
     @GetMapping("/{id}/with-restaurant/")

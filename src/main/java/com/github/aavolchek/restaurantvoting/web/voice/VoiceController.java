@@ -12,11 +12,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import springfox.documentation.annotations.ApiIgnore;
 
+import java.net.URI;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -47,12 +50,16 @@ public class VoiceController {
     @PostMapping(value = "{restaurantId}")
     @ResponseBody
     @Transactional
-    public Voice createWithLocation(@PathVariable("restaurantId") int restaurantId, @ApiIgnore @AuthenticationPrincipal AuthUser user) {
+    public ResponseEntity<Voice> createWithLocation(@PathVariable("restaurantId") int restaurantId, @ApiIgnore @AuthenticationPrincipal AuthUser user) {
         log.info("create voice for restaurant {}", restaurantId);
         checkTimeLimit(timeLimitForVoting);
         Voice voice = new Voice(user.getUser(), LocalDate.now(), getRestaurantById(restaurantId));
         checkNew(voice);
-        return voiceRepository.save(voice);
+        Voice created = voiceRepository.save(voice);
+        URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path(REST_URL + "/{id}")
+                .buildAndExpand(created.getId()).toUri();
+        return ResponseEntity.created(uriOfNewResource).body(created);
     }
 
     @PutMapping("/{restaurantId}")
