@@ -23,7 +23,7 @@ import java.util.List;
 @RestController
 @RequestMapping(value = AdminMenuController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
-@Tag(name = "AdminRestaurantController")
+@Tag(name = "AdminMenuController")
 public class AdminMenuController {
 
     public static final String REST_URL = "/api/admin/restaurants/{restaurantId}/menu";

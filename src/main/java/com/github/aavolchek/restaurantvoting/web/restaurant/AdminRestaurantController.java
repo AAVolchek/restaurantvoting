@@ -1,9 +1,7 @@
 package com.github.aavolchek.restaurantvoting.web.restaurant;
 
 import com.github.aavolchek.restaurantvoting.model.Restaurant;
-import com.github.aavolchek.restaurantvoting.model.Voice;
 import com.github.aavolchek.restaurantvoting.repository.RestaurantRepository;
-import com.github.aavolchek.restaurantvoting.repository.VoiceRepository;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -14,7 +12,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
-import java.time.LocalDate;
 import java.util.List;
 
 import static com.github.aavolchek.restaurantvoting.util.validation.ValidationUtil.assureIdConsistent;
@@ -26,13 +23,11 @@ import static com.github.aavolchek.restaurantvoting.util.validation.ValidationUt
 @Tag(name = "AdminRestaurantController")
 public class AdminRestaurantController {
     private final RestaurantRepository repository;
-    private final VoiceRepository voiceRepository;
 
     public static final String REST_URL = "/api/admin/restaurants";
 
-    public AdminRestaurantController(RestaurantRepository repository, VoiceRepository voiceRepository) {
+    public AdminRestaurantController(RestaurantRepository repository) {
         this.repository = repository;
-        this.voiceRepository = voiceRepository;
     }
 
     @GetMapping("/{id}")
@@ -72,11 +67,5 @@ public class AdminRestaurantController {
         log.info("update {}", id);
         assureIdConsistent(restaurant, id);
         repository.save(restaurant);
-    }
-
-    @GetMapping("/voices/{restaurantId}")
-    public List<Voice> getRestaurantVoices(@PathVariable("restaurantId") int restaurantId){
-        log.info("getAll restaurant voices {}", restaurantId);
-        return voiceRepository.getVoicesOfRestaurantWithUser(LocalDate.now(), restaurantId);
     }
 }
