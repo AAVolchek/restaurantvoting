@@ -1,6 +1,8 @@
 package com.github.aavolchek.restaurantvoting.web.voice;
 
+import com.github.aavolchek.restaurantvoting.model.Menu;
 import com.github.aavolchek.restaurantvoting.model.Voice;
+import com.github.aavolchek.restaurantvoting.repository.MenuRepository;
 import com.github.aavolchek.restaurantvoting.repository.RestaurantRepository;
 import com.github.aavolchek.restaurantvoting.repository.VoiceRepository;
 import com.github.aavolchek.restaurantvoting.web.AuthUser;
@@ -20,6 +22,7 @@ import springfox.documentation.annotations.ApiIgnore;
 import java.net.URI;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 import static com.github.aavolchek.restaurantvoting.util.validation.ValidationUtil.checkTimeLimit;
 
@@ -36,10 +39,12 @@ public class UserVoiceController {
 
     private final VoiceRepository voiceRepository;
     private final RestaurantRepository restaurantRepository;
+    private final MenuRepository menuRepository;
 
-    public UserVoiceController(VoiceRepository voiceRepository, RestaurantRepository restaurantRepository) {
+    public UserVoiceController(VoiceRepository voiceRepository, RestaurantRepository restaurantRepository, MenuRepository menuRepository) {
         this.voiceRepository = voiceRepository;
         this.restaurantRepository = restaurantRepository;
+        this.menuRepository = menuRepository;
     }
 
     @PostMapping(value = "{restaurantId}")
@@ -75,5 +80,12 @@ public class UserVoiceController {
     @GetMapping("/voice-of-user-for-today")
     public ResponseEntity<Voice> getVoiceOfUserForToday(@ApiIgnore @AuthenticationPrincipal AuthUser user){
         return ResponseEntity.of(voiceRepository.getWithRestaurant(LocalDate.now(), user.id()));
+    }
+
+    @GetMapping("/menus-today")
+    public List<Menu> getAllMenu() {
+        log.info("getAll today’s menu");
+        LocalDate date = LocalDate.now();
+        return menuRepository.findAllByDateWithRestaurantAndDishList(date);
     }
 }
