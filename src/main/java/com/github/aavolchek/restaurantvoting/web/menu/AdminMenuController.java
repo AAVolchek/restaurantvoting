@@ -93,10 +93,4 @@ public class AdminMenuController {
             menuRepository.save(menu);
         }
     }
-
-    @GetMapping("/{id}/with-restaurant-and-dish-list")
-    public Menu getWithRestaurantAndDishList(@PathVariable int id, @PathVariable int restaurantId) {
-        log.info("get menu {} for restaurant {}", id, restaurantId);
-        return menuRepository.getWithRestaurantAndDishList(id, restaurantId).orElse(null);
-    }
 }

@@ -72,10 +72,4 @@ public class AdminDishController {
         assureIdConsistent(dish.getRestaurant(), restaurantId);
         dishRepository.save(dish);
     }
-
-    @GetMapping("/{id}/with-restaurant/")
-    public Dish getWithRestaurant(@PathVariable int id, @PathVariable int restaurantId) {
-        log.info("get dish {} for restaurant {}", id, restaurantId);
-        return dishRepository.getWithRestaurant(id, restaurantId).orElse(null);
-    }
 }
