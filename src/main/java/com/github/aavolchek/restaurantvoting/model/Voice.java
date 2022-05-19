@@ -35,12 +35,6 @@ public class Voice extends BaseEntity {
     @NotNull
     private Restaurant restaurant;
 
-    public Voice(User user, LocalDate registeredDate, Restaurant restaurant) {
-        this.user = user;
-        this.registeredDate = registeredDate;
-        this.restaurant = restaurant;
-    }
-
     public Voice(Integer id, User user, LocalDate registeredDate, Restaurant restaurant) {
         super(id);
         this.user = user;

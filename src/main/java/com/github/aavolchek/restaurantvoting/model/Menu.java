@@ -39,12 +39,6 @@ public class Menu extends NamedEntity {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<Dish> dishList;
 
-    public Menu(Restaurant restaurant, LocalDate registeredDate, List<Dish> dishList) {
-        this.restaurant = restaurant;
-        this.registeredDate = registeredDate;
-        this.dishList = dishList;
-    }
-
     public Menu(Integer id, String name, Restaurant restaurant, LocalDate registeredDate, List<Dish> dishList) {
         super(id, name);
         this.restaurant = restaurant;

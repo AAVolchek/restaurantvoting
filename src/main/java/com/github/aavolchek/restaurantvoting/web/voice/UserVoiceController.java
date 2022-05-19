@@ -55,7 +55,7 @@ public class UserVoiceController {
         if(voiceRepository.get(LocalDate.now(), user.id()).orElse(null) != null) {
             checkTimeLimit(timeLimitForVoting);
         }
-        Voice voice = new Voice(user.getUser(), LocalDate.now(), restaurantRepository.getById(restaurantId));
+        Voice voice = new Voice(null, user.getUser(), LocalDate.now(), restaurantRepository.getById(restaurantId));
         Voice created = voiceRepository.save(voice);
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL + "/{id}")
