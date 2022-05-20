@@ -14,7 +14,6 @@ import java.util.List;
 @CacheConfig(cacheNames = "menu")
 public interface MenuRepository extends BaseRepository<Menu>{
     @Query("SELECT m FROM Menu m WHERE m.restaurant.id = ?1")
-    @Cacheable
     List<Menu> getAll(int restaurantId);
 
     @EntityGraph(attributePaths = {"restaurant"}, type = EntityGraph.EntityGraphType.FETCH)
