@@ -8,6 +8,7 @@ import com.github.aavolchek.restaurantvoting.repository.RestaurantRepository;
 import com.github.aavolchek.restaurantvoting.util.validation.ValidationUtil;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -46,6 +47,7 @@ public class AdminMenuController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @CacheEvict(value = "menu", allEntries = true)
     public void delete(@PathVariable int id, @PathVariable int restaurantId) {
         log.info("delete menu {} for restaurant {}", id, restaurantId);
         if(get(id, restaurantId).getBody() != null) {
@@ -55,14 +57,16 @@ public class AdminMenuController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
+    @CacheEvict(value = "menu")
     public List<Menu> getAll(@PathVariable int restaurantId) {
         log.info("getAll for restaurant {}", restaurantId);
-        return  menuRepository.getAll(restaurantId);
+        return menuRepository.getAll(restaurantId);
     }
 
     @PostMapping
     @ResponseBody
     @Transactional
+    @CacheEvict(value = "menu", allEntries = true)
     public ResponseEntity<Menu> createWithLocation(@PathVariable int restaurantId,
                                    @RequestParam String name,
                                    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate registeredDate,
@@ -81,6 +85,7 @@ public class AdminMenuController {
 
     @PutMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @CacheEvict(value = "menu", allEntries = true)
     public void update(@PathVariable int id,
                        @PathVariable int restaurantId,
                        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate registeredDate,
@@ -92,5 +97,12 @@ public class AdminMenuController {
             menu.setRegisteredDate(registeredDate);
             menuRepository.save(menu);
         }
+    }
+
+    @GetMapping("/with-dish-list/{id}")
+    @CacheEvict(value = "menu", allEntries = true)
+    public Menu getWithDishList(@PathVariable int id, @PathVariable int restaurantId) {
+        log.info("get menu {} for restaurant {}", id, restaurantId);
+        return menuRepository.getWithDishList(id, restaurantId).orElse(null);
     }
 }

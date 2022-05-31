@@ -1,6 +1,5 @@
 package com.github.aavolchek.restaurantvoting.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -24,7 +23,6 @@ public class Menu extends NamedEntity {
     @JoinColumn(name = "restaurant_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @NotNull
-    @JsonBackReference
     private Restaurant restaurant;
 
     @Column(name = "registered_date", nullable = false, columnDefinition = "date default now()")

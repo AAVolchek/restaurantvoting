@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Transactional(readOnly = true)
 @CacheConfig(cacheNames = "menu")
@@ -20,4 +21,7 @@ public interface MenuRepository extends BaseRepository<Menu>{
     @Query("SELECT m From Menu m JOIN FETCH m.dishList WHERE m.registeredDate =?1")
     @Cacheable
     List<Menu> findAllByDateWithRestaurantAndDishList(LocalDate date);
+
+    @Query("SELECT m From Menu m JOIN FETCH m.dishList WHERE m.id = ?1 AND m.restaurant.id =?2")
+    Optional<Menu> getWithDishList(int id, int restaurantId);
 }

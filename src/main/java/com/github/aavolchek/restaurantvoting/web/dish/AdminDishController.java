@@ -2,6 +2,7 @@ package com.github.aavolchek.restaurantvoting.web.dish;
 
 import com.github.aavolchek.restaurantvoting.model.Dish;
 import com.github.aavolchek.restaurantvoting.repository.DishRepository;
+import com.github.aavolchek.restaurantvoting.repository.RestaurantRepository;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -22,12 +23,14 @@ import static com.github.aavolchek.restaurantvoting.util.validation.ValidationUt
 @Slf4j
 @Tag(name = "AdminDishController")
 public class AdminDishController {
-    public static final String REST_URL = "/api/admin/restaurants/{restaurantId}/dish";
+    public static final String REST_URL = "/api/admin/restaurants/{restaurantId}/dishes";
 
     private final DishRepository dishRepository;
+    private final RestaurantRepository restaurantRepository;
 
-    public AdminDishController(DishRepository dishRepository) {
+    public AdminDishController(DishRepository dishRepository, RestaurantRepository restaurantRepository) {
         this.dishRepository = dishRepository;
+        this.restaurantRepository = restaurantRepository;
     }
 
     @GetMapping("/{id}")
@@ -56,7 +59,7 @@ public class AdminDishController {
     public ResponseEntity<Dish> createWithLocation(@Valid @RequestBody Dish dish, @PathVariable int restaurantId) {
         log.info("create {} for restaurant {}", dish, restaurantId);
         checkNew(dish);
-        assureIdConsistent(dish.getRestaurant(), restaurantId);
+        dish.setRestaurant(restaurantRepository.getById(restaurantId));
         Dish created = dishRepository.save(dish);
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL + "/{id}")

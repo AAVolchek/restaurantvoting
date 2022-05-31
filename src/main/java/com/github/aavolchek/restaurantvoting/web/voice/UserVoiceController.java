@@ -1,5 +1,6 @@
 package com.github.aavolchek.restaurantvoting.web.voice;
 
+import com.github.aavolchek.restaurantvoting.error.IllegalRequestDataException;
 import com.github.aavolchek.restaurantvoting.model.Menu;
 import com.github.aavolchek.restaurantvoting.model.Voice;
 import com.github.aavolchek.restaurantvoting.repository.MenuRepository;
@@ -23,6 +24,7 @@ import java.net.URI;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 
 import static com.github.aavolchek.restaurantvoting.util.validation.ValidationUtil.checkTimeLimit;
 
@@ -52,9 +54,6 @@ public class UserVoiceController {
     @Transactional
     public ResponseEntity<Voice> createWithLocation(@PathVariable("restaurantId") int restaurantId, @ApiIgnore @AuthenticationPrincipal AuthUser user) {
         log.info("create voice for restaurant {}", restaurantId);
-        if(voiceRepository.get(LocalDate.now(), user.id()).orElse(null) != null) {
-            checkTimeLimit(timeLimitForVoting);
-        }
         Voice voice = new Voice(null, user.getUser(), LocalDate.now(), restaurantRepository.getById(restaurantId));
         Voice created = voiceRepository.save(voice);
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
@@ -70,11 +69,13 @@ public class UserVoiceController {
     public void update(@PathVariable("restaurantId") int restaurantId, @ApiIgnore @AuthenticationPrincipal AuthUser user){
         log.info("update voice - restaurant {}", restaurantId);
         checkTimeLimit(timeLimitForVoting);
-        Voice voice = voiceRepository.get(LocalDate.now(), user.id()).orElse(null);
-        if (voice != null) {
+        Optional<Voice> optionalVoice = voiceRepository.get(LocalDate.now(), user.id());
+        if (optionalVoice.isPresent()) {
+            Voice voice = optionalVoice.get();
             voice.setRestaurant(restaurantRepository.getById(restaurantId));
             voiceRepository.save(voice);
-        }
+        } else
+            throw new IllegalRequestDataException("Need create new voice");
     }
 
     @GetMapping("/voice-of-user-for-today")
