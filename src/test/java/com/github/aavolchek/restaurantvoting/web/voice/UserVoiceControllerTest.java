@@ -1,5 +1,6 @@
 package com.github.aavolchek.restaurantvoting.web.voice;
 
+import com.github.aavolchek.restaurantvoting.model.Voice;
 import com.github.aavolchek.restaurantvoting.repository.VoiceRepository;
 import com.github.aavolchek.restaurantvoting.web.AbstractControllerTest;
 import com.github.aavolchek.restaurantvoting.web.user.UserTestData;
@@ -7,8 +8,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import static com.github.aavolchek.restaurantvoting.web.voice.VoiceTestData.REST1_ID;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -34,5 +37,22 @@ class UserVoiceControllerTest extends AbstractControllerTest {
     void getUnAuth() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL))
                 .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @WithUserDetails(value = UserTestData.USER_MAIL)
+    void createWithLocation() throws Exception{
+        Voice newVoice = VoiceTestData.getNew();
+        ResultActions action = perform(MockMvcRequestBuilders
+                .post(REST_URL + REST1_ID)
+                .param("restaurantId", Integer.toString(REST1_ID)))
+                .andDo(print())
+                .andExpect(status().isCreated());
+
+        Voice created = VoiceTestData.VOICE_MATCHER.readFromJson(action);
+        int newId = created.getId();
+        newVoice.setId(newId);
+        VoiceTestData.VOICE_MATCHER.assertMatch(created, newVoice);
+        VoiceTestData.VOICE_MATCHER.assertMatch(voiceRepository.getById(newId), newVoice);
     }
 }
