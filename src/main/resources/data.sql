@@ -37,7 +37,7 @@ values (1, 1),
        (2, 6),
        (2, 7);
 
-INSERT INTO voice(user_id, registered_date, restaurant_id)
+INSERT INTO vote(user_id, registered_date, restaurant_id)
 values (2, now(), 1)
 
 

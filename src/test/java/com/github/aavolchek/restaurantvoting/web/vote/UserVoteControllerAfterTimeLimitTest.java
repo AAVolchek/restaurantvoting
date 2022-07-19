@@ -1,6 +1,6 @@
-package com.github.aavolchek.restaurantvoting.web.voice;
+package com.github.aavolchek.restaurantvoting.web.vote;
 
-import com.github.aavolchek.restaurantvoting.model.Voice;
+import com.github.aavolchek.restaurantvoting.model.Vote;
 import com.github.aavolchek.restaurantvoting.util.JsonUtil;
 import com.github.aavolchek.restaurantvoting.web.user.UserTestData;
 import org.junit.jupiter.api.Test;
@@ -14,14 +14,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@TestPropertySource(properties = {"time-limit.voice=00:00:00"})
-class UserVoiceControllerAfterTimeLimitTest extends UserVoiceControllerTest {
+@TestPropertySource(properties = {"time-limit.vote=00:00:00"})
+class UserVoteControllerAfterTimeLimitTest extends UserVoteControllerTest {
     @Test
     @WithUserDetails(value = UserTestData.ADMIN_MAIL)
     void update() throws Exception {
-        Voice updated = VoiceTestData.getUpdated();
+        Vote updated = VoteTestData.getUpdated();
         perform(MockMvcRequestBuilders
-                .put(REST_URL + VoiceTestData.VOICE_ADMIN_ID)
+                .put(REST_URL + VoteTestData.VOTE_ADMIN_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(updated)))
                 .andDo(print())

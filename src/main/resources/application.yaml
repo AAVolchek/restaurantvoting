@@ -47,4 +47,4 @@ server.servlet:
     force: true
 
 time-limit:
-  voice: '11:00'
+  vote: '11:00'

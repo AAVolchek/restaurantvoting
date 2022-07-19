@@ -10,13 +10,13 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "voice", uniqueConstraints = {@UniqueConstraint(columnNames = {"registered_date", "user_id"},
-       name = "voice_unique_date_user_idx")})
+@Table(name = "vote", uniqueConstraints = {@UniqueConstraint(columnNames = {"registered_date", "user_id"},
+       name = "vote_unique_date_user_idx")})
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString(callSuper = true, exclude = {"user, restaurant"})
-public class Voice extends BaseEntity {
+public class Vote extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -35,7 +35,7 @@ public class Voice extends BaseEntity {
     @NotNull
     private Restaurant restaurant;
 
-    public Voice(Integer id, User user, LocalDate registeredDate, Restaurant restaurant) {
+    public Vote(Integer id, User user, LocalDate registeredDate, Restaurant restaurant) {
         super(id);
         this.user = user;
         this.registeredDate = registeredDate;
