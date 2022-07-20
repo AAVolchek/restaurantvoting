@@ -10,7 +10,7 @@ VALUES ('USER', 1),
 INSERT INTO restaurant (name, location)
 VALUES ('Coqfighter Finsbury Park', '75 Beak Str.' ),
        ('Piazza Italiana', 'str. Mozart 89'),
-       ('ZIMA Russian Restaurant', 'str. Georgy 1a');
+       ('Winter Russian Restaurant', 'str. Georgy 1a');
 
 INSERT INTO menu (name,  restaurant_id, registered_date)
 VALUES ('Menu Coqfighter Finsbury Park', 1, now()),
